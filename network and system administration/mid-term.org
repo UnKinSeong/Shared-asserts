@@ -1,0 +1,498 @@
+#+TITLE: Summary
+#+AUTHOR: Stanley Un
+
+
+
+* Introduction to Unix
+** Unix.
+*** Feature:
+1. Multi-user
+2. Multi-tasking
+3. Separation for user->permission->hardware
+*** History:
+1. (1977) about 500 Unix sites world-wide.
+2. (1980) BSD 4.1 (Berkeley Software Development)
+3. (1983) SunOs, BSD 4.2, System V.
+4. (1988) At&T and Sun Microsystems jointly develop System V Release 4 (SVR4). Developed into UnixWare and Solaris 2.
+5. (1991) Linux was originated.
+*** File System:
+1. Tree like structure.
+   - Root -> '/'
+     |
+     - sub-directory
+     - sub-files...
+** Linux.
+*** Feature:
+1. Free Unix-type OS.
+*** History:
+1. Developed by Linux Torvalds with assistance of developers around the world.
+2. Originated in 1991, by Linux Torvalds (Finnish graduate student).
+3. Kernel version 1.0 released in 1994 and today most recent stable version is 4.9 (As of Dec 2016).
+
+* file structure.
+** tree like structure.
+#+begin_src ditaa :file ditaa1.png
+/ <- this is the ancestor of the all directories on the system.
+|-bin  <- Essent|al tools and other programs (or binaries).
+|-dev  <- Representing the system's various hardware devices. etc. '/dev/cdrom' to access the CD-ROM drive.
+|-etc  <- Miscellaneous system configuration files, startup files.
+|-home <- The home directories for all the system's users.
+|   |-user1
+|   |   |-Desktop
+|   |   |-Documents
+|   |   |-Downloads
+|   |   |-Music
+|   |   |-Pictures
+|   |   |-Public
+|   |   |-Templates
+|   |   |-Videos
+|   |-user2
+|-lib   <- Essential system library files used by the tools in '/bin'.
+|-proc  <- Files that give information about current system processes.
+|-root  <- The super-user's home directory, whose username is root.
+#+end_src
+* Permissions:
+** Permission check:
+*** Using 'ls -l' to get permissions of all file/directories in the current path.
+**** Example:
+***** -rw-r--r-- 1 username groupname 4096 Jan 0 00:00 filename
+***** drwxr-xr-x 1 username groupname 4096 Jan 0 00:00 directore name
+*** Modifier:
+#+begin_src ditaa :file ditaa2.png
+-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 filename
+|[-][-][-] | [------] [-------] [--] [---------] [------]
+| |  |  |  |     |        |       |        |         +---> Filename
+| |  |  |  |     |        |       |        +-------------> Date/Time last Modified.
+| |  |  |  |     |        |       +----------------------> File/Directory Size.
+| |  |  |  |     |        +------------------------------> Group Name.
+| |  |  |  |     +---------------------------------------> User (Owner) Name.
+| |  |  |  +---------------------------------------------> Number of hard links.
+| |  |  +------------------------------------------------> Other(Everyone) permissions.
+| |  +---------------------------------------------------> Group permissions.
+| +------------------------------------------------------> User Permissions.
++--------------------------------------------------------> File Type.
+#+end_src
+**** Analyzes:
+- File Type: File
+- User Permission            : Read Write
+- Group Permission           : Read
+- Other(Everyone) Permission : Read
+- Hard Links                 : 1
+- User (Owner) Name          : username
+- Group Name                 : groupname
+- File/Directory Size        : 4096 bytes
+- Date/Time last Modified    : Jan 1 00:00
+- File name                  : filename
+**** Permission flags:
+- r <- Read Permission to category of users.
+- w <- Write permission to category of users.
+- x <- Execution permission to category of users.
+**** Permission categories:
+- owner <- The owner of the file or application.
+- group <- The group that owns the file or application.
+- others <- All user with access to the system.
+* Basic Commands:
+- ls    : list the contents of a working/target directory.
+- cd    : change the working directory to target directory.
+- pwd   : Show the current working directory path.
+- cp    : copy file/directory to target directory.
+- mv    : move file/directory to target directory.
+- rm    : remove target file/directory.
+*Involved working with directory, -R flag may be necessary*
+
+** ls
+*** List the contents of a directory the terminal current entry.
+#+begin_src ditaa :file ditaa3.png
+/
+|-home
+|  |-username
+|  |    |-Downloads          <-Current Directory
+|  |    |     |-random.txt
+|  |    |     |-'random with space.txt'
+#+end_src
+*** Can used with arguments.
+**** ls
+- username@hostname:~/Downloads$ ls ▉⏎
+- random.txt :file
+- 'random with space.txt'
+**** ls -a
+- username@hostname:~/Downloads$ ls -a▉⏎
+- .
+- ..
+- random.txt
+- 'random with space.txt'
+**** ls -A
+- username@hostname:~/Downloads$ ls -A▉⏎
+- random.txt
+- 'random with space.txt'
+**** ls -l
+username@hostname:~/Downloads$ ls -l▉⏎
+- -rw-r--r-- username groupname 1024 Jan 1 00:00 random.txt
+- -rw-r--r-- username groupname 2048 Jan 1 00:00 'random with space.txt'
+** cd
+*** Change Entry Point to Target Directory
+**** Use cases:
+***** Examples
+****** Example 1 ..
+#+begin_src ditaa :file ditaa4.png
+/
+|-home
+|   |-username
+|   |    |-Downloads            <- Current Directory
+|   |    |-Demo_Directory       <- Target Directory.
+|   |    |      |-DemoFile.txt
+#+end_src
+- username@hostname:~/Downloads$ cd ../Demo_Directory ▉ ⏎
+- username@hostname:~/Demo_Directory$ ▉
+****** Example 2 ..
+#+begin_src ditaa :file ditaa5.png
+/
+|-home
+|   |-username                  <- Target Directory
+|   |    |-Downloads
+|   |    |-Demo_Directory       <- Current Directory
+|   |    |      |-DemoFile.txt
+#+end_src
+- username@hostname:~/Demo_Directory$ cd .. ▉ ⏎
+- username@hostname:~$ ▉
+****** Example 3 .
+#+begin_src ditaa :file ditaa6.png
+/
+|-home
+|   |-username
+|   |    |-Downloads
+|   |    |-Demo_Directory              <- Current Directory
+|   |    |      |-Demo_Nest_Directory  <- Target Directory
+|   |    |      |-DemoFile.txt
+#+end_src
+- username@hostname:~/Demo_Directory$ cd ./Demo_Nest_Directory ▉ ⏎
+- username@hostname:~/Demo_Directory/Demo_Nest_Directory$ ▉
+****** Example 4 /absolute
+#+begin_src ditaa :file ditaa7.png
+/
+|-home
+|   |-username
+|   |    |-Downloads                         <-Current Directory
+|   |    |-'Target Directory With Space'     <-Target Directory
+#+end_src
+- username@hostname:~/Downloads$ cd '/home/username/Target Directory With Space' ▉⏎
+- username@hostname:~/Target Directory With Space$ ▉
+** pwd
+*** Show the current working directory (Entry point)
+**** Use cases:
+#+begin_src ditaa :file ditaa8.png
+/
+|-home
+|   |-username
+|   |    |-Downloads            <- terminal current entry point.
+#+end_src
+- username@hostname:~/Downloads pwd ▉⏎
+- /home/username/Downloads
+- username@hostname:~/Downloads ▉⏎
+** mkdir | rmdir
+*** mkdir(make directory) | rmdir(remove directory)
+**** Use cases:
+- create a directory under Downloads.
+#+begin_src ditaa :file ditaa9.png
+/
+|-home
+|  |-username
+|  |    |-Downloads          <- Current Directory
+#+end_src
+- username@hostname:~/Downloads$ mkdir DemoDirectory ▉⏎
+- remove the DemoDirectory under Downloads.
+#+begin_src ditaa :file ditaa10.png
+/
+|-home
+|  |-username
+|  |    |-Downloads          <- Current Directory
+|  |    |     |-DemoDirectory <- Directory to be remove.
+#+end_src
+- username@hostname:~/Downloads$ rmdir DemoDirectory ▉⏎
+** cp | mv | rm
+*** cp|mv|rm -> (Copy/Move) File/Directory to Target Directory.(Remove) Target File/Directory
+**** Use cases:
+#+begin_src ditaa :file ditaa11.png
+/
+|-home
+|  |-username
+|  |    |-Downloads          <- Current Directory
+|  |    |     |-Apache.txt
+|  |    |     |-apple.txt
+|  |    |     |-catechize.txt
+|  |    |     |-cat_movie.txt
+|  |    |     |-cat.txt
+|  |    |     |-consumable.zip
+|  |    |     |-judgment.txt
+|  |    |     |-junk.txt
+|  |    |     |-more_study_material.zip
+|  |    |     |-study_material.zip
+|  |    |-Long_Term_Storage
+|  |    |         |-Cat_Girl.rar
+#+end_src
+***** Copy the study_material.zip to Long_Term_Storage/
+username@hostname:~/Downloads$ cp study_material.zip ../Long_Term_Storage
+***** Copy the study_material to Long_Term_Storage and change filename to Joy_Material.zip
+username@hostname:~/Downloads$ cp study_material.zip ../Long_Term_Storage/Joy_Material.zip
+***** Copy all File in Downloads to Long_Term_Storage/
+username@hostname:~/Downloads$ cp * ../Long_Term_Storage/
+***** Remove all txt file in Downloads which startwith letter c and endwith e
+username@hostname:~/Downloads$ rm c*e.txt
+***** Copy all File in Long_Term_Storage to Current Directory.
+username@hostname:~/Downloads$ cp ../Long_Term_Storage/* ./
+***** Remove The Long_Term_Storage Folder and all files in it.
+username@hostname:~/Downloads$ rm -rf ../Long_Term_Storage
+***** Now Create Long_Term_Storage_Folder at under username and move all File at current directory to it.
+username@hostname:~/Downloads$ mkdir ../Long_Term_Storage_Folder | mv ./* ../Long_Term_Storage_Folder
+
+
+
+* Security Utility commands:
+- chown : changes the owners of a file/directory.
+- chgrp : changes the access permissions of a file/directory.
+- chmod : changes the access permissions of a file/directory.
+- involved a directory and files inside it. -R flag may needed.
+
+** chown <- changes the owners of a file/directory.
+*** Require Root Access.
+*** chown change the ownship:group of the File/Directory to another.
+
+**** Use cases:
+#+begin_src ditaa :file ditaa12.png
+/
+|- [drwxr-xr-x 3 root root 49152 Jan 1 00:00 home]
+|  |- [drwxr-xr-x 32 username groupname 49152 Jan 1 00:00 username]
+|  |    |- [drwxr-xr-x 2 username groupname 4096 Jan 1 00:00 Downloads]
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 Meanful_Study_material.zip]
+|  |    |- [drwxr-xr-x 2 username 45056 Jan 1 00:00 Long_Term_Storage_Folder]        <- Current Directory
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 study_material.zip]
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 Cat_Girl.rar]
+#+end_src
+***** Change the ownship of Long_Term_Storage_Folder to sally.
+- username@hostname:~/Long_Term_Storage_Folder$ chown -R sally ./
+** chgrp <- changes the access permissions of a file/directory.
+*** If the user belong to the group then the user can change the group to target group.
+*** Change the Group of the File/Directory to target Group
+**** Use cases:
+#+begin_src ditaa :file ditaa13.png
+/
+|- [drwxr-xr-x 3 root root 49152 Jan 1 00:00 home]
+|  |- [drwxr-xr-x 32 username groupname 49152 Jan 1 00:00 username]
+|  |    |- [drwxr-xr-x 2 username groupname 4096 Jan 1 00:00 Downloads]
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 Meanful_Study_material.zip]
+|  |    |- [drwxr-xr-x 2 username 45056 Jan 1 00:00 Long_Term_Storage_Folder]        <- Current Directory
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 study_material.zip]
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 Cat_Girl.rar]
+#+end_src
+***** Change the group of Long_Term_Storage_Folder to lsp_group.
+- username@hostname:~/Long_Term_Storage_Folder$ chgrp -R lsp_group ./
+** chmod <- changes the default group associated with a file.
+*** Only the root user and the owner of the File/Directory can change use this command.
+*** Change the mode of the File/Directory. r|w|x (read|write|execute)
+**** Use cases:
+***** chmod ug+wr, o-wrx demo_file.txt
+***** Analysis:
+- change the demo_file.txt user and group to have read and write permissions
+- also remove read/write/execute permission for other(everyone) group.
+***** use_order 1
+1. chmod:
+   - chmod
+2. arguments:
+   - -R <- recursively used when target is directory.
+3. group selection:
+   - u <- user
+   - g <- group
+   - o <- other(everyone)
+   - a <- user+group+other
+4. operations:
+   - '+' <- add
+   - '-' <- remove
+5. permission mode
+   - r <- read
+   - w <- write
+   - x <- execute
+6. (optional)
+   - followed by ,
+   - use_order 1.
+7. Target File/Directory
+   - demo_file // demo_directory (require -R after use_order 1)
+***** use_order 2
+1. chmod:
+   - chmod
+2. arguments:
+   - -R <- recursively used when target is directory.
+3. follow by (user|group|other(everyone))
+   - 0 <- no permission          |binary = 000
+   - 1 <- execute                |binary = 001
+   - 2 <- write                  |binary = 010
+   - 3 <- write and execute      |binary = 011
+   - 4 <- read                   |binary = 100
+   - 5 <- read and execute       |binary = 101
+   - 6 <- read and write         |binary = 110
+   - 7 <- read write and execute |binary = 111
+
+   - set permission for user|group|other(everyone)) at once
+   - 000 <- set user|group|other(everyone) all no permission
+   - 101 <- set user[execute]|group[no permission]|other(everyone)[execute]
+4. (optional)
+   - followed by ,
+   - use_order 1.
+5. Target File/Directory
+   - demo_file // demo_directory (require -R after use_order 1)
+
+
+***** Example
+#+begin_src ditaa :file ditaa14.png
+/
+|- [drwxr-xr-x 3 root root 49152 Jan 1 00:00 home]
+|  |- [drwxr-xr-x 32 username groupname 49152 Jan 1 00:00 username]
+|  |    |- [drwxr-xr-x 2 username groupname 4096 Jan 1 00:00 Downloads]
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 Meanful_Study_material.zip]
+|  |    |- [drwxr-xr-x 2 username 45056 Jan 1 00:00 Long_Term_Storage_Folder]        <- Current Directory
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 study_material.zip]
+|  |    |    |- [-rw-r--r-- 1 username groupname 4096 Jan 1 00:00 Cat_Girl.rar]
+#+end_src
+****** Remove write permission for user group of the /home/username/Downloads/ and files in it.
+- result as: [dr-xr-xr-x 2 username groupname 4096 Jan 1 00:00 Downloads]
+- username@hostname:~/Long_Term_Storage_Folder$ chmod -R u-w /home/username/Downloads
+- or
+- username@hostname:~/Long_Term_Storage_Folder$ chmod -R 555 /home/username/Downloads
+* Script
+** Fundamental
+*** Startwith
+#!/bin/bash
+
+*** Assigning the output of a command to a variable:
+- Be reminded that the declaration of the variable must be no space between
+- variable = 'ls'
+        - ^ ^ <-it will not work due to the space between '='.
+
+- variable='ls' <- it will work.
+#+begin_src bash
+#! /bin/bash
+filelist='ls'
+echo $filelist
+#+end_src
+
+#+RESULTS:
+: ls
+
+*** mathematics
+#+begin_src bash
+#! /bin/bash
+count=5
+count=$(($count + 1))
+echo $count
+#+end_src
+
+*** Execute the command of a variable
+#+begin_src bash
+#! /bin/bash
+count='ls'
+echo $(eval $count ~/Downloads)
+#+end_src
+
+
+*** For Loop
+#+begin_src bash
+#! /bin/bash
+value1=5
+value2=6
+value3=7
+for var in $value1 $value2 $value3
+do
+    if (($var == 5))
+    then
+        echo "$var == 5"
+    else
+        echo "$var != 5"
+    fi
+done
+#+end_src
+
+#+RESULTS:
+| 5 | == | 5 |
+| 6 | != | 5 |
+| 7 | != | 5 |
+
+*** while Loop
+#+begin_src bash
+#! /bin/bash
+i=1
+sum=0
+while (($i >= 100))
+do
+    sum=$(($sum+$i))
+    i=$(($i+1))
+done
+echo $sum
+#+end_src
+** Example:
+*** odd numbers from 1 to 100
+#+begin_src bash
+for ((i=1; i<=100;i=i+2))
+do
+    ((sum+=i))
+done
+echo $sum
+#+end_src
+*** Ask user to input a full path, check if it exist, if not, create that directory. Other print out the contents of the path.
+#+begin_src bash
+echo "Input a path"
+read DEST
+if [-d "$DEST"]; then
+    eval ls "$DEST"
+else
+    mkdir -R "$DEST"
+fi
+#+end_src
+*** Ask user input a string. If string == "QUIT" then quit the script. Else print out what user input.
+#+begin_src bash
+read Input
+if ["$Input" = "QUIT"];
+then
+    echo $Input
+fi
+#+end_src
+*** Ask user to input 5 integer and display the maximum, minimum and the sum of those number.
+#+begin_src bash :tangle test.sh
+read n1 n2 n3 n4 n5
+max=$n1
+min=$n1
+sum=0
+for var in $n1 $n2 $n3 $n4 $n5
+do
+if (($var>$max))
+then
+    max=$var
+fi
+if(($var<$min))
+then
+    min=$var
+fi
+sum=$(($sum+$var))
+done
+echo "The max is $max"
+echo "The min is $min"
+echo "The sum is $sum"
+#+end_src
+*** Ask user to input a integer which > 2. display all the prime numbers greater than 2 and less then the input number.
+#+begin_src bash :tangle test2.sh
+echo "input a integer number greater than 2:"
+read int
+for((i=3;i<=int;i=i+2))
+do
+flag=true
+for((j=2;j<=i/2;j++))
+do
+   if (( $((i%j)) == 0 ))
+   then
+       flag=false
+   fi
+done
+   if (( $flag == true ))
+   then
+       echo $i
+   fi
+done
+#+end_src
