@@ -127,8 +127,8 @@
 - 'random with space.txt'
 **** ls -l
 username@hostname:~/Downloads$ ls -l▉⏎
-- -rw-r--r-- username groupname 1024 Jan 1 00:00 random.txt
-- -rw-r--r-- username groupname 2048 Jan 1 00:00 'random with space.txt'
+- -rw-r--r-- 1 username groupname 1024 Jan 1 00:00 random.txt
+- -rw-r--r-- 1 username groupname 2048 Jan 1 00:00 'random with space.txt'
 ** cd
 *** Change Entry Point to Target Directory
 **** Use cases:
