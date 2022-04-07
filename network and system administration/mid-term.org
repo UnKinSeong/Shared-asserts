@@ -410,11 +410,6 @@ do
 done
 #+end_src
 
-#+RESULTS:
-| 5 | == | 5 |
-| 6 | != | 5 |
-| 7 | != | 5 |
-
 *** while Loop
 #+begin_src bash
 #! /bin/bash
@@ -449,7 +444,7 @@ fi
 *** Ask user input a string. If string == "QUIT" then quit the script. Else print out what user input.
 #+begin_src bash
 read Input
-if ["$Input" = "QUIT"];
+if (($Input == "QUIT"));  <-- or --> if [ '$Input' -eq 'QUIT' ]
 then
     echo $Input
 fi
@@ -462,11 +457,11 @@ min=$n1
 sum=0
 for var in $n1 $n2 $n3 $n4 $n5
 do
-if (($var>$max))
+if (($var>$max)) <-- or --> if [ '$var' -gt '$max' ]
 then
     max=$var
 fi
-if(($var<$min))
+if(($var<$min))  <-- or --> if [ '$var' -lt '$min' ]
 then
     min=$var
 fi
