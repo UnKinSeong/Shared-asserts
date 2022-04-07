@@ -322,14 +322,14 @@ username@hostname:~/Downloads$ mkdir ../Long_Term_Storage_Folder | mv ./* ../Lon
 2. arguments:
    - -R <- recursively used when target is directory.
 3. follow by (user|group|other(everyone))
-   - 0 <- no permission          |binary = 000
-   - 1 <- execute                |binary = 001
-   - 2 <- write                  |binary = 010
-   - 3 <- write and execute      |binary = 011
-   - 4 <- read                   |binary = 100
-   - 5 <- read and execute       |binary = 101
-   - 6 <- read and write         |binary = 110
-   - 7 <- read write and execute |binary = 111
+   - 0 <- no permission          '|binary = 000
+   - 1 <- execute                '|binary = 001
+   - 2 <- write                  '|binary = 010
+   - 3 <- write and execute      '|binary = 011
+   - 4 <- read                   '|binary = 100
+   - 5 <- read and execute       '|binary = 101
+   - 6 <- read and write         '|binary = 110
+   - 7 <- read write and execute '|binary = 111
 
    - set permission for user|group|other(everyone)) at once
    - 000 <- set user|group|other(everyone) all no permission
